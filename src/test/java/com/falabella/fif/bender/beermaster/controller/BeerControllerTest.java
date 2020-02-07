@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
@@ -80,28 +81,22 @@ class BeerControllerTest {
     }
 
     @Test
-    void when_create_beer_is_exception() throws Exception {
-        Mockito.when(beerService.saveBeer(any())).thenReturn(null);
-
-      //probaremos guardar una cerveza con id existente
-    	BeerItemDTO beerItemDTO = BeerItemDTO.builder()
-    			.id(3L) 
-                .brewery("Lager")
-                .name("Cristal")
-                .country("Chile")
-                .currency("CLP")
-                .price(1000.0)
-                .build();
+    void when_create_beer_is_null() throws Exception {
     	
+    	BeerItemDTO beerItemDTO = BeerItemDTO.builder()
+								  .id(2L)
+						          .build();
 
-    	Throwable thrown =
-                assertThrows(Throwable.class,
-                   () -> mockMvc.perform(MockMvcRequestBuilders.post("/beers")
-           		        .content(objectMapper.writeValueAsString(beerItemDTO))
-        		        .contentType(MediaType.APPLICATION_JSON)),
-                   "Esperando que /beers lanze un excepcion");
+        Mockito.when(beerService.saveBeer(beerItemDTO)).thenReturn(null);
 
-        assertTrue(thrown.getMessage().length() > 0 );
+        mockMvc.perform(MockMvcRequestBuilders.post("/beers")
+   		        .content(objectMapper.writeValueAsString(beerItemDTO))
+		        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.id").doesNotExist())
+                .andDo(print());
+
+    
         
 
     }
