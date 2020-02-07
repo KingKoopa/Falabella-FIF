@@ -1,7 +1,5 @@
 package com.falabella.fif.bender.beermaster.controller;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -20,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.falabella.fif.bender.beermaster.dto.BeerItemDTO;
+import com.falabella.fif.bender.beermaster.dto.BoxPriceDTO;
 import com.falabella.fif.bender.beermaster.repository.BeerItemRepository;
 import com.falabella.fif.bender.beermaster.service.BeerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -98,6 +97,18 @@ class BeerControllerTest {
 
     
         
+
+    }
+    
+    @Test
+    void when_calculate_BoxPriceById_is_not_ok() throws Exception {
+    	
+        Mockito.when(beerService.calculateBoxPriceById(1L, "USD", 12)).thenReturn(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/beers/{beerID}/boxprice?currency=USD&quantity=12", "1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print());
 
     }
 }
