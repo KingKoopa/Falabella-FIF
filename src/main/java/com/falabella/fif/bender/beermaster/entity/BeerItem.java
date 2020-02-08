@@ -1,6 +1,7 @@
 package com.falabella.fif.bender.beermaster.entity;
 
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 @Data
 @NoArgsConstructor
 @Entity
+@Builder
 public class BeerItem {
 	
 	
